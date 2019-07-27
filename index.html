@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <link href="css/dialog.css" rel="stylesheet">
+    <link href="css/xwPop.css" rel="stylesheet">
+    <link href="css/layui.css" rel="stylesheet">
+    <!--适应手机尺寸-->
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="full-screen" content="true"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <meta name="360-fullscreen" content="true"/>
+    <title>五子棋</title>
+</head>
+<style type="text/css">
+    body {
+        background: #e1e1e1
+    }
+
+    #gobang {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-top: 64px;
+    }
+</style>
+<body>
+<h1 align="center">随便做着玩之五子棋</h1>
+<div id="gobang"></div>
+</body>
+<script type="text/javascript" src="js/phaser.min.js"></script>
+<script type="text/javascript" src="js/phaser-input.min.js"></script>
+<script type="text/javascript" src="layui.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
+<script type="text/javascript" src="js/socket.io.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/mDialogMin.js"></script>
+<script type="text/javascript" src="js/xwPop.js"></script>
+<script type="text/javascript" src="js/api/api.js"></script>
+<script type="text/javascript" src="js/utils/VoiceEnum.js"></script>
+<script type="text/javascript" src="js/utils/ShowLevel.js"></script>
+<script type="text/javascript" src="js/utils/GetUserInfo.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/socket/GameSocket.js"></script>
+<script type="text/javascript" src="js/game/PreloadState.js"></script>
+<script type="text/javascript" src="js/game/BootState.js"></script>
+<script type="text/javascript" src="js/game/LoginState.js"></script>
+<script type="text/javascript" src="js/game/GameState.js"></script>
+<script>
+  //载入预载场景
+  game.state.add('start', game.States.start)
+  game.state.add('preload', game.States.preload)
+  game.state.add('boot', game.States.boot)
+  game.state.add('game', game.States.game)
+  game.state.add('login', game.States.login)
+  game.state.start('start')
+</script>
+</html>

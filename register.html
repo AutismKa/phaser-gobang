@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link href="css/layui.css" rel="stylesheet">
+</head>
+<style type="text/css">
+    .x-red {
+        color: #ff000f;
+    }
+
+    .check {
+        padding-right: 4px;
+        color: #6571ff
+    }
+
+    .display {
+        display: none;
+    }
+
+    .same-username {
+        color: #ff000f;
+        margin-left: 110px;
+    }
+
+    .same-nickname {
+        color: #ff000f;
+        margin-left: 110px;
+    }
+
+    .can-use {
+        color: #00b906;
+    }
+
+    .check-color {
+        color: #a5a5a5;
+    }
+</style>
+<body>
+<div class="layui-fluid" style="padding-top: 32px">
+    <div class="layui-row">
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label for="L_email" class="layui-form-label">
+                    <span class="x-red">*</span>用户名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_email" name="username" required="" lay-verify="username" autocomplete="off"
+                           class="layui-input"></div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span id="check_username" class="check"><i class="layui-icon layui-icon-refresh"></i></span>
+                    <span class="x-red">*</span>将会成为您唯一的登入名
+                </div>
+            </div>
+            <div class="layui-form-item same-username display">已经存在相同的用户名了</div>
+            <div class="layui-form-item">
+                <label for="L_username" class="layui-form-label">
+                    <span class="x-red">*</span>昵称</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="L_username" name="nickname" required="" lay-verify="nikename"
+                           autocomplete="off" class="layui-input"></div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span id="check_nickname" class="check"><i class="layui-icon layui-icon-refresh"></i></span>
+                    <span class="x-red">*</span>将会成为您唯一的游戏名
+                </div>
+            </div>
+            <div class="layui-form-item same-nickname display">已经存在相同的昵称了</div>
+            <div class="layui-form-item">
+                <label for="L_pass" class="layui-form-label">
+                    <span class="x-red">*</span>密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" id="L_pass" name="pass" required="" lay-verify="pass" autocomplete="off"
+                           class="layui-input"></div>
+                <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                    <span class="x-red">*</span>确认密码</label>
+                <div class="layui-input-inline">
+                    <input type="password" id="L_repass" name="repass" required="" lay-verify="repass"
+                           autocomplete="off" class="layui-input"></div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label"></label>
+                <button class="layui-btn register-btn" lay-filter="add" lay-submit="">注册</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
+<script type="text/javascript" src="js/api/api.js"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script>
+  layui.use(['form', 'layer', 'jquery'],
+    function () {
+      $ = layui.jquery
+      var form = layui.form,
+        layer = layui.layer
+
+      //自定义验证规则
+      form.verify({
+        username: [/^[0-9A-Za-z_]{6,15}$/, '用户名只包含大小写英文、数字和下划线。长度在6-15字符之间'],
+        nikename: function (value) {
+          if (value.length < 2 || value.length > 10) {
+            return '昵称在2-10字符之间'
+          }
+        },
+        pass: [/(.+){6,12}$/, '密码必须6到12位'],
+        repass: function (value) {
+          if ($('#L_pass').val() != $('#L_repass').val()) {
+            return '两次密码不一致'
+          }
+        }
+      })
+      //监听提交
+      form.on('submit(add)',
+        function (data) {
+          console.log(data)
+          $('.register-btn').addClass('layui-btn-disabled')
+          $('.register-btn').attr('disabled', true)
+          $('.register-btn').html('<i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>提交中')
+          axios.post(api + 'register', {
+            userName: data.field.username,
+            nickName: data.field.nickname,
+            passWord: data.field.pass
+          }).then(function (res) {
+            console.log(res)
+            if (res.data.code === 200) {
+              layer.alert("注册成功", {
+                  icon: 6
+                },
+                function () {
+                  let index = parent.layer.getFrameIndex(window.name)
+                  parent.layer.close(index)
+                })
+              $('.register-btn').removeClass('layui-btn-disabled')
+              $('.register-btn').attr('disabled', false)
+              $('.register-btn').html('注册')
+            } else {
+              layer.alert("注册失败，" + res.data.msg, {
+                icon: 5
+              })
+              if (res.data.msg === '已经存在这个昵称了，请重新输入') {
+                $('.same-nickname').removeClass('display')
+              } else {
+                $('.same-username').removeClass('display')
+              }
+              $('.register-btn').removeClass('layui-btn-disabled')
+              $('.register-btn').attr('disabled', false)
+              $('.register-btn').html('注册')
+            }
+          }).catch(function (e) {
+            console.log(e)
+            layer.alert("注册失败，服务器异常", {
+              icon: 5
+            })
+            $('.register-btn').removeClass('layui-btn-disabled')
+            $('.register-btn').attr('disabled', false)
+            $('.register-btn').html('注册')
+          })
+          return false
+        })
+
+    })
+  $('#check_username').click(function () {
+    $('.same-username').addClass('check-color')
+    $('.same-username').removeClass('display')
+    $('.same-username').html('检测中...')
+    axios.post(api + 'checkUserName', {
+      userName: $('#L_email').val()
+    }).then(function (res) {
+      console.log(res)
+      $('.same-username').removeClass('check-color')
+      if (res.data.code === 200) {
+        $('.same-username').addClass('can-use')
+        $('.same-username').html(res.data.msg)
+      } else {
+        $('.same-username').removeClass('can-use')
+        $('.same-username').html(res.data.msg)
+      }
+    }).catch(function (e) {
+      console.log(e)
+      $('.same-username').removeClass('check-color')
+      $('.same-username').removeClass('can-use')
+      $('.same-username').html('检测失败，服务器异常')
+    })
+  })
+  $('#check_nickname').click(function () {
+    $('.same-nickname').addClass('check-color')
+    $('.same-nickname').removeClass('display')
+    $('.same-nickname').html('检测中...')
+    axios.post(api + 'checkNickName', {
+      nickName: $('#L_username').val()
+    }).then(function (res) {
+      console.log(res)
+      $('.same-nickname').removeClass('check-color')
+      if (res.data.code === 200) {
+        $('.same-nickname').addClass('can-use')
+        $('.same-nickname').html(res.data.msg)
+      } else {
+        $('.same-nickname').removeClass('can-use')
+        $('.same-nickname').html(res.data.msg)
+      }
+    }).catch(function (e) {
+      console.log(e)
+      $('.same-nickname').removeClass('check-color')
+      $('.same-nickname').removeClass('can-use')
+      $('.same-nickname').html('检测失败，服务器异常')
+    })
+  })
+</script>
+</html>
