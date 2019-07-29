@@ -4,6 +4,9 @@
  */
 let createRoomBtn, joinRoomBtn, infoText
 game.States.boot = function () {
+  this.init = function () {
+    game.scale.setGameSize(700, 580)
+  }
   this.preload = function () {
 
   }

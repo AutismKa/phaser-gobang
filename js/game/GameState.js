@@ -37,6 +37,10 @@ game.States.game = function () {
 
   }
   this.create = function () {
+    //手机棋盘适配
+    if (!isDesktop) {
+      game.scale.setGameSize(540, 880)
+    }
     //一些游戏元素创建
     bg = game.add.sprite(0, 40, 'bg')
     mask = game.add.tileSprite(0, 0, 700, 40, 'mask')
@@ -51,7 +55,7 @@ game.States.game = function () {
       align: 'center'
     })
     roomNumText.anchor.setTo(0.5)
-    pingText = game.add.text(600, 25, 'Ping:0 ms', {
+    pingText = game.add.text(game.world.width - 100, 25, 'Ping:0 ms', {
       fontSize: '20px',
       fill: '#00bf20'
     })
@@ -113,6 +117,16 @@ game.States.game = function () {
 
   //创建固定的UI
   function createText () {
+    //根据不同的设备来创建不同的位置的UI
+    if (isDesktop) {
+      pcUI()
+    } else {
+      mobileUI()
+    }
+  }
+
+  //电脑端棋盘UI
+  function pcUI () {
     //玩家信息
     game.add.text(620, 100, '玩家1', {
       fontSize: '22px',
@@ -289,6 +303,209 @@ game.States.game = function () {
     startBtn = game.add.button(620, 500, 'startBtn', clickHandler, this)
     readyBtn = game.add.button(620, 500, 'readyBtn', clickHandler, this)
     quitBtn = game.add.button(620, 550, 'quitBtn', clickHandler, this)
+    startBtn.anchor.setTo(0.5)
+    readyBtn.anchor.setTo(0.5)
+    quitBtn.anchor.setTo(0.5)
+    startBtn.onInputDown.add(function () {
+      startBtn.scale.set(0.9)
+    }, this)
+    startBtn.onInputUp.add(function () {
+      startBtn.scale.set(1)
+    }, this)
+    readyBtn.onInputDown.add(function () {
+      readyBtn.scale.set(0.9)
+    }, this)
+    readyBtn.onInputUp.add(function () {
+      readyBtn.scale.set(1)
+    }, this)
+    quitBtn.onInputDown.add(function () {
+      quitBtn.scale.set(0.9)
+    }, this)
+    quitBtn.onInputUp.add(function () {
+      quitBtn.scale.set(1)
+    }, this)
+    readyBtn.visible = false
+    startBtn.visible = false
+  }
+
+  //移动端棋盘UI
+  function mobileUI () {
+    //玩家信息
+    game.add.text(250, 620, '玩家1', {
+      fontSize: '22px',
+      fill: '#000',
+      align: 'center'
+    }).anchor.setTo(0.5)
+    game.add.text(250, 720, '玩家2', {
+      fontSize: '22px',
+      fill: '#000',
+      align: 'center'
+    }).anchor.setTo(0.5)
+    game.add.text(450, 620, '行动方', {
+      fontSize: '22px',
+      fill: '#000',
+      align: 'center'
+    }).anchor.setTo(0.5)
+    player_1_text = game.add.text(250, 650, '', {
+      fontSize: '16px',
+      fill: '#0056ff',
+      align: 'center'
+    })
+    player_1_text.anchor.setTo(0.5)
+    player_2_text = game.add.text(250, 750, '待加入...', {
+      fontSize: '16px',
+      fill: '#0056ff',
+      align: 'center'
+    })
+    player_2_text.anchor.setTo(0.5)
+    movingText = game.add.text(450, 670, '', {
+      fontSize: '16px',
+      fill: '#0056ff',
+      align: 'center'
+    })
+    movingText.anchor.setTo(0.5)
+    //分数/称号
+    player_1_scoreText = game.add.text(220, 660, '分数：', {
+      fontSize: '14px',
+      fill: '#000',
+    })
+    player_1_levelText = game.add.text(220, 680, '称号：', {
+      fontSize: '14px',
+      fill: '#000',
+    })
+    player_1_scoreText.visible = false
+    player_1_levelText.visible = false
+
+    player_2_scoreText = game.add.text(220, 760, '分数：', {
+      fontSize: '14px',
+      fill: '#000',
+    })
+    player_2_levelText = game.add.text(220, 780, '称号：', {
+      fontSize: '14px',
+      fill: '#000',
+    })
+    player_2_scoreText.visible = false
+    player_2_levelText.visible = false
+    //创建聊天气泡
+    chatBubble_1 = game.add.sprite(50, 590, 'chatBubble')
+    chatBubble_2 = game.add.sprite(50, 690, 'chatBubble')
+    chatText_1 = game.add.text(chatBubble_1.width / 2 - 5, chatBubble_1.height / 2 + 3, '', {
+      fontSize: '12px',
+      fill: '#ffffff',
+      align: 'center'
+    })
+    chatBubble_1.addChild(chatText_1)
+    chatText_1.anchor.setTo(0.5)
+    chatText_2 = game.add.text(chatBubble_2.width / 2 - 5, chatBubble_2.height / 2 + 3, '', {
+      fontSize: '12px',
+      fill: '#ffffff',
+      align: 'center'
+    })
+    chatBubble_2.addChild(chatText_2)
+    chatText_2.anchor.setTo(0.5)
+    chatTween_1 = game.add.tween(chatBubble_1).to({alpha: 1}, 500, 'Linear', false, 0).yoyo(true, 3000)
+    chatTween_2 = game.add.tween(chatBubble_2).to({alpha: 1}, 500, 'Linear', false, 0).yoyo(true, 3000)
+    chatBubble_1.alpha = 0
+    chatBubble_2.alpha = 0
+    //创建下拉面板
+    panel = game.add.sprite(0, -271, 'chatPanel')
+    arrowBtn = game.add.button(0, panel.height, 'arrowBtn', clickHandler, this)
+    panel.addChild(arrowBtn)
+    arrow = game.add.sprite(arrowBtn.width / 2, arrowBtn.height / 2, 'arrow')
+    arrow.anchor.setTo(0.5)
+    arrowBtn.addChild(arrow)
+    cuiBtn = game.add.button(panel.width / 2, panel.height / 2 - 80, 'cuiBtn', clickHandler, this)
+    cuiBtn.anchor.setTo(0.5)
+    biecuiBtn = game.add.button(panel.width / 2, panel.height / 2 - 30, 'biecuiBtn', clickHandler, this)
+    biecuiBtn.anchor.setTo(0.5)
+    chaoBtn = game.add.button(panel.width / 2, panel.height / 2 + 20, 'chaoBtn', clickHandler, this)
+    chaoBtn.anchor.setTo(0.5)
+    chatBtn = game.add.button(panel.width / 2, panel.height / 2 + 70, 'chatBtn', clickHandler, this)
+    chatBtn.anchor.setTo(0.5)
+
+    cuiBtn.onInputDown.add(function () {
+      cuiBtn.scale.set(0.9)
+    }, this)
+    cuiBtn.onInputUp.add(function () {
+      cuiBtn.scale.set(1)
+    }, this)
+    biecuiBtn.onInputDown.add(function () {
+      biecuiBtn.scale.set(0.9)
+    }, this)
+    biecuiBtn.onInputUp.add(function () {
+      biecuiBtn.scale.set(1)
+    }, this)
+    chaoBtn.onInputDown.add(function () {
+      chaoBtn.scale.set(0.9)
+    }, this)
+    chaoBtn.onInputUp.add(function () {
+      chaoBtn.scale.set(1)
+    }, this)
+    chatBtn.onInputDown.add(function () {
+      chatBtn.scale.set(0.9)
+    }, this)
+    chatBtn.onInputUp.add(function () {
+      chatBtn.scale.set(1)
+    }, this)
+    panel.addChild(cuiBtn)
+    panel.addChild(biecuiBtn)
+    panel.addChild(chaoBtn)
+    panel.addChild(chatBtn)
+    panel.inputEnabled = true
+    panel.input.priorityID = 3 //点击优先级，用来避免点到面板还下棋
+    cuiBtn.input.priorityID = 4
+    chatBtn.input.priorityID = 4
+    biecuiBtn.input.priorityID = 4
+    chaoBtn.input.priorityID = 4
+    arrowBtn.input.priorityID = 4
+    //棋子展示
+    whiteDisplay[0] = game.add.sprite(200, 615, 'white')
+    whiteDisplay[1] = game.add.sprite(200, 715, 'white')
+    blackDisplay[0] = game.add.sprite(200, 615, 'black')
+    blackDisplay[1] = game.add.sprite(200, 715, 'black')
+    whiteDisplay[0].anchor.setTo(0.5)
+    whiteDisplay[1].anchor.setTo(0.5)
+    blackDisplay[0].anchor.setTo(0.5)
+    blackDisplay[1].anchor.setTo(0.5)
+    whiteDisplay[0].animations.add('white', [0], 1, true)
+    whiteDisplay[1].animations.add('white', [0], 1, true)
+    blackDisplay[0].animations.add('black', [0], 1, true)
+    blackDisplay[1].animations.add('black', [0], 1, true)
+    blackDisplay[0].play('black')
+    blackDisplay[1].play('black')
+    whiteDisplay[0].play('white')
+    whiteDisplay[1].play('white')
+    whiteDisplay[0].visible = false
+    whiteDisplay[1].visible = false
+    blackDisplay[0].visible = false
+    blackDisplay[1].visible = false
+    //准备信息
+    readyText = game.add.text(310, 720, '未准备', {
+      fontSize: '14px',
+      fill: '#ff0000',
+      align: 'center'
+    })
+    readyText.anchor.setTo(0.5)
+    readyText.visible = false
+    //掉线信息
+    disconnectText[0] = game.add.text(310, 620, '已掉线', {
+      fontSize: '14px',
+      fill: '#ff0000',
+      align: 'center'
+    })
+    disconnectText[0].anchor.setTo(0.5)
+    disconnectText[1] = game.add.text(310, 720, '已掉线', {
+      fontSize: '14px',
+      fill: '#ff0000',
+      align: 'center'
+    })
+    disconnectText[1].anchor.setTo(0.5)
+    disconnectText[0].visible = false
+    disconnectText[1].visible = false
+    //按钮显示
+    startBtn = game.add.button(100, 640, 'startBtn', clickHandler, this)
+    readyBtn = game.add.button(100, 640, 'readyBtn', clickHandler, this)
+    quitBtn = game.add.button(100, 710, 'quitBtn', clickHandler, this)
     startBtn.anchor.setTo(0.5)
     readyBtn.anchor.setTo(0.5)
     quitBtn.anchor.setTo(0.5)
@@ -530,6 +747,34 @@ game.States.game = function () {
       fill: '#ff0000',
       align: 'center'
     }, true)
+    if (player_1.isDisconnect === 1) {
+      layui.use(['layer', 'form'], function () {
+        let layer = layui.layer
+          , form = layui.form
+        layer.alert('由于房主掉线房间自动解散，结算结果：<br>玩家1：<br>' + player_1.name + '(' + showLevel(score_1) + ')<br>分数：' + score_1 + '(' + (score_1 + 3) + '-3)<br>玩家2：<br>'
+          + player_2.name + '(' + showLevel(score_2) + ')<br>分数：' + score_2 + '(' + (score_2 - 3) + '+3)', {
+          icon: 0,
+          title: '提示'
+        })
+      })
+      dataInitialization(true)
+      updateUserInfo()
+    }
+    if (player_2.isDisconnect === 1) {
+      xw.warn(player_2.name + '掉线，自动退出房间')
+      disconnectText[1].visible = false
+      player_2_text.text = '待加入...'
+      player_2 = {}
+      player_2_levelText.visible = false
+      player_2_scoreText.visible = false
+      readyText.visible = false
+      readyText.text = '未准备'
+      readyText.setStyle({
+        fontSize: '14px',
+        fill: '#ff0000',
+        align: 'center'
+      }, true)
+    }
   }
 
   //清除掉线
