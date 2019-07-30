@@ -56,7 +56,7 @@ game.States.boot = function () {
         layui.use(['layer', 'form'], function () {
           let layer = layui.layer
             , form = layui.form
-          layer.prompt({title: '请输入房间号', formType: 0, maxlength: 5}, function (roomNum, index) {
+          layer.prompt({title: '请输入房间号或者好友昵称', formType: 0}, function (roomNum, index) {
             layer.close(index)
             socket.emit('join_room', {
               playerName: userInfo.nickName,
