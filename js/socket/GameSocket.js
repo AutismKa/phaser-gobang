@@ -273,4 +273,24 @@ function connect () {
       netUpdatePingSignal.dispatch()
     }
   })
+  socket.on('reconnect', function () {
+    xw.loadRemove()
+    xw.success('连接成功')
+  })
+  socket.on('reconnecting', function (num) {
+    xw.loadRemove()
+    if (num === 4) {
+      game.state.start('login')
+      xw.error('连接出错')
+      socket.disconnect()
+      xw.loadRemove()
+      return
+    }
+    xw.load('第' + num + '次重连中...')
+  })
+  socket.on('reconnect_failed', function () {
+    game.state.start('login')
+    xw.loadRemove()
+    xw.error('连接出错')
+  })
 }
