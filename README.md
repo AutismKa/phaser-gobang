@@ -7,6 +7,8 @@
 
 项目api.js是服务器地址，目前服务器处于在线状态
 
+[游戏地址](http://cdn.whitedi.com/gobang/)
+
 ![](https://raw.githubusercontent.com/AutismKa/phaser-gobang/master/README/d1.png)
 ![](https://raw.githubusercontent.com/AutismKa/phaser-gobang/master/README/d2.png)
 ![](https://raw.githubusercontent.com/AutismKa/phaser-gobang/master/README/d3.png)
