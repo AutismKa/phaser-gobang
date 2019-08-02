@@ -4,7 +4,7 @@
  */
 let socket, loginUserNum, ping, roomNum, quitLoginUserNum, isPlay, movingName,
   movingLoginUserNum, server_i, server_j, chessboard, winnerName, winnerColor, winnerLoginUserNum, score_1, score_2,
-  isReconnect = false, chatMsg, chatLoginUserNum, saveEnum
+  isReconnect = false, chatMsg, chatLoginUserNum, saveEnum, connectCount
 
 function connect () {
   loginUserNum = userInfo.id
@@ -19,6 +19,14 @@ function connect () {
   socket.on('push_event', function (data) {
     console.log(data)
     switch (data.id) {
+      //连接数信息
+      case '20001':
+        console.log('消息类型：' + data.id + '\n' +
+          '连接数消息---->当前连接：' + data.count
+        )
+        connectCount = data.count
+        netUpdateConnectCountSignal.dispatch()
+        break
       //没有找到房间号消息
       case '40001':
         console.log('消息类型：' + data.id + '\n' +
