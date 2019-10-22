@@ -7,5 +7,5 @@
 // const api = 'http://localhost:8049/api/'
 
 //正式服务器
-const socketUrl = 'http://cd.whitedi.com:8087'
-const api = 'http://cd.whitedi.com:8049/api/'
+const socketUrl = 'http://cdserver.whitedi.com:8087'
+const api = 'http://cdserver.whitedi.com:8049/api/'
